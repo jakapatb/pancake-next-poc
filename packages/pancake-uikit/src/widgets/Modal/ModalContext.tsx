@@ -48,7 +48,7 @@ const ModalProvider: React.FC = ({ children }) => {
       handleDismiss();
     }
   };
-
+  console.log({ isOpen });
   return (
     <Context.Provider
       value={{
@@ -66,6 +66,7 @@ const ModalProvider: React.FC = ({ children }) => {
             })}
         </ModalWrapper>
       )}
+
       {children}
     </Context.Provider>
   );

@@ -1,0 +1,109 @@
+{
+  "version": 2,
+  "cli": { "defaultCollection": "@nrwl/next" },
+  "defaultProject": "next-poc",
+  "generators": {
+    "@nrwl/react": { "application": { "babel": true } },
+    "@nrwl/next": { "application": { "style": "styled-components", "linter": "eslint" } }
+  },
+  "projects": {
+    "@pancakeswap-libs/eslint-config-pancake": { "root": "packages/eslint-config-pancake", "type": "library" },
+    "@pancakeswap-libs/uikit": { "root": "packages/pancake-uikit", "type": "library" },
+    "next-poc": {
+      "root": "apps/next-poc",
+      "sourceRoot": "apps/next-poc",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/next:build",
+          "outputs": ["{options.outputPath}"],
+          "options": { "root": "apps/next-poc", "outputPath": "dist/apps/next-poc" },
+          "configurations": { "production": {} }
+        },
+        "serve": {
+          "executor": "@nrwl/next:server",
+          "options": { "buildTarget": "next-poc:build", "dev": true },
+          "configurations": { "production": { "buildTarget": "next-poc:build:production", "dev": false } }
+        },
+        "export": { "executor": "@nrwl/next:export", "options": { "buildTarget": "next-poc:build:production" } },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/next-poc"],
+          "options": { "jestConfig": "apps/next-poc/jest.config.js", "passWithNoTests": true }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["apps/next-poc/**/*.{ts,tsx,js,jsx}"] }
+        }
+      }
+    },
+    "next-poc-e2e": {
+      "root": "apps/next-poc-e2e",
+      "sourceRoot": "apps/next-poc-e2e/src",
+      "projectType": "application",
+      "targets": {
+        "e2e": {
+          "executor": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/next-poc-e2e/cypress.json",
+            "tsConfig": "apps/next-poc-e2e/tsconfig.e2e.json",
+            "devServerTarget": "next-poc:serve"
+          },
+          "configurations": { "production": { "devServerTarget": "next-poc:serve:production" } }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["apps/next-poc-e2e/**/*.{js,ts}"] }
+        }
+      }
+    },
+    "uikit": {
+      "root": "libs/uikit",
+      "sourceRoot": "libs/uikit/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/uikit",
+            "tsConfig": "libs/uikit/tsconfig.lib.json",
+            "project": "libs/uikit/package.json",
+            "entryFile": "libs/uikit/src/index.ts",
+            "external": ["react", "react-dom", "react-is", "styled-components"],
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [{ "glob": "README.md", "input": ".", "output": "." }]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["libs/uikit/**/*.{ts,tsx,js,jsx}"] }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/uikit"],
+          "options": { "jestConfig": "libs/uikit/jest.config.js", "passWithNoTests": true }
+        },
+        "storybook": {
+          "executor": "@nrwl/storybook:storybook",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "port": 4400,
+            "config": { "configFolder": "libs/uikit/.storybook" }
+          },
+          "configurations": { "ci": { "quiet": true } }
+        },
+        "build-storybook": {
+          "executor": "@nrwl/storybook:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "uiFramework": "@storybook/react",
+            "outputPath": "dist/storybook/uikit",
+            "config": { "configFolder": "libs/uikit/.storybook" }
+          },
+          "configurations": { "ci": { "quiet": true } }
+        }
+      }
+    }
+  }
+}
